@@ -1,0 +1,19 @@
+groups:
+- name: tcpmonitor
+  rules:
+  - alert: TCPServerNotResponding
+    expr: probe_success{job="blackbox_tcp_local"} == 0
+    for: 210s
+    labels:
+    annotations:
+      summary: "{{ $labels.name }} ({{ $labels.instance }}) tcp server not respoding"
+      description: "{{ $labels.name }} ({{ $labels.instance }}) tcp server not responding"
+- name: dnsmonitor
+  rules:
+  - alert: DNSServerNotRespoding
+    expr: probe_success{job="blackbox_dns_local"} == 0
+    for: 240s
+    labels:
+    annotations:
+      summary: "{{ $labels.name }} ({{ $labels.instance }}) dns server is not responding"
+      description: "{{ $labels.name }} ({{ $labels.instance }}) dns server is not responding"

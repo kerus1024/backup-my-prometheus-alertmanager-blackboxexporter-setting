@@ -1,0 +1,21 @@
+[
+    {
+        "targets":[
+            "kerus.net:8443"
+        ],
+        "labels":{
+            "name":"raspberrypi",
+            "scope":"global"
+        }
+    },
+    {
+        "targets":[
+            "elpo.net:443"
+        ],
+        "labels":{
+            "name":"elpo.net",
+            "owner":"elpo",
+            "scope":"global"
+        }
+    }
+]

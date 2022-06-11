@@ -1,0 +1,60 @@
+global:
+  scrape_interval:     10s # Set the scrape interval to every 15 seconds. Default is every 1 minute.
+  evaluation_interval: 50s # Evaluate rules every 15 seconds. The default is every 1 minute.
+  # scrape_timeout is set to the global default (10s).
+
+# Alertmanager configuration
+alerting:
+  alertmanagers:
+  - static_configs:
+    - targets:
+       - localhost:9093
+
+# Load rules once and periodically evaluate them according to the global 'evaluation_interval'.
+rule_files:
+  - 'alert.rule.yml'
+  # - "first_rules.yml"
+  # - "second_rules.yml"
+
+# A scrape configuration containing exactly one endpoint to scrape:
+# Here it's Prometheus itself.
+scrape_configs:
+  # The job name is added as a label `job=<job_name>` to any timeseries scraped from this config.
+  - job_name: 'blackbox_tcp_local'
+    file_sd_configs:
+      - files:
+        - 'targets_monitoringserver1.json'
+    metrics_path: /probe
+    scrape_interval: 5s
+    params:
+      module: [mytcp4]
+    relabel_configs:
+      - source_labels: [__name__]
+        target_label: __name__
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: localhost:9115
+  - job_name: 'blackbox_dns_local'
+    metrics_path: /probe
+    scrape_interval: 20s
+    params:
+      module: [mydns4]
+    relabel_configs:
+    - source_labels: [__name__]
+      target_label: __name__
+    - source_labels: [__address__]
+      target_label: __param_target
+    - source_labels: [__param_target]
+      target_label: instance
+    - target_label: __address__
+      replacement: localhost:9115
+    static_configs:
+      - targets:
+          - '8.8.8.8'
+        labels:
+          name: 'Google DNS'
+          scope: "global"
+

@@ -1,0 +1,32 @@
+# alertmanager
+route:
+  group_by: ['alertname', 'name']
+  group_wait: 5s
+  group_interval: 1s
+  repeat_interval: 3h
+  receiver: 'master'
+  routes:
+  - matchers:
+    - owner="kerus"
+    receiver: "kerus"
+  - matchers:
+    - owner="elpo"
+    receiver: "elpo"
+    
+receivers:
+- name: 'master'
+  webhook_configs:
+    - url: 'https://messagepush.kerus.net/gw-discord/webhook-prometheus'
+- name: 'kerus'
+  webhook_configs:
+    - url: 'https://messagepush.kerus.net/gw-discord/webhook-prometheus?receiver=kerus'
+- name: 'elpo'
+  webhook_configs:
+    - url: 'https://messagepush.kerus.net/gw-discord/webhook-prometheus?receiver=elpo'
+
+inhibit_rules:
+  - source_match:
+      severity: 'critical'
+    target_match:
+      severity: 'warning'
+    equal: ['alertname']
